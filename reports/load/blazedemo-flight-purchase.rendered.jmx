@@ -72,7 +72,7 @@
         <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Target business throughput" enabled="true">
           <doubleProp>
             <name>throughput</name>
-            <value>4200</value>
+            <value>3750</value>
             <savedValue>3750.0</savedValue>
           </doubleProp>
           <intProp name="calcMode">1</intProp>

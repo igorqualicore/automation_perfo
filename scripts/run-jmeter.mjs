@@ -348,7 +348,7 @@ function buildMetrics(samples, totalDurationSeconds) {
   return {
     count: samples.length,
     errors,
-    errorRate: round(errors / samples.length),
+    errorRate: round(errors / samples.length, 4),
     throughput: round(samples.length / totalDurationSeconds),
     avg: round(sum / samples.length),
     p90: round(percentile(durations, 0.9)),
@@ -366,8 +366,8 @@ function percentile(sortedValues, ratio) {
   return sortedValues[index];
 }
 
-function round(value) {
-  return Number(value.toFixed(2));
+function round(value, digits = 2) {
+  return Number(value.toFixed(digits));
 }
 
 function formatDateTimePtBr(date) {

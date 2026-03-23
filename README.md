@@ -123,7 +123,7 @@ Comportamento da pipeline:
 - executa diariamente às 08:00 no horário de Brasília
 - usa o cron 11:00 UTC no GitHub Actions
 - roda em Windows, macOS e Linux
-- executa smoke test por padrão no push e no agendamento
+- executa load test por padrão no push e no agendamento, com alvo configurado de 250 req/s
 - permite execução manual via workflow_dispatch com seleção de cenário smoke, load ou spike
 - publica um HTML consolidado com os 3 sistemas operacionais
 
@@ -204,18 +204,18 @@ Configuração executada:
 - usuários: 350
 - ramp-up: 60s
 - duração: 300s
-- alvo configurado: 4200 transações por minuto
-- equivalente teórico: 280 req/s considerando 4 requisições HTTP por jornada completa
+- alvo configurado: 3750 transações por minuto
+- equivalente teórico: 250 req/s considerando 4 requisições HTTP por jornada completa
 
 Resultado medido:
 
-- início: 23/03/2026, 01:10:07
-- fim: 23/03/2026, 01:15:07
+- início: 23/03/2026, 02:52:13
+- fim: 23/03/2026, 02:57:13
 - duração total: 5min 0s
-- throughput HTTP medido: 69.94 req/s
-- percentil 90 da transação de negócio: 1354 ms
+- throughput HTTP medido: 62.46 req/s
+- percentil 90 da transação de negócio: 1377 ms
 - taxa de erro da transação: 0%
-- compras concluídas no período analisado: 3875
+- compras concluídas no período analisado: 3433
 
 Leitura do resultado:
 
@@ -226,7 +226,7 @@ Leitura do resultado:
 Conclusão do teste de carga:
 
 - status no desafio: Reprovado no desafio
-- o principal motivo foi a vazão sustentada de aproximadamente 69.94 req/s, inferior ao mínimo de 250 req/s
+- o principal motivo foi a vazão sustentada de aproximadamente 62.46 req/s, inferior ao mínimo de 250 req/s
 - apesar disso, o comportamento de latência e a ausência de erros indicam que o gargalo observado está ligado à capacidade de throughput do ambiente sob teste e ou do ambiente local de execução da carga, não a uma falha funcional do fluxo
 
 ### Teste de pico

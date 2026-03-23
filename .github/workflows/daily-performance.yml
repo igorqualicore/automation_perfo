@@ -9,7 +9,7 @@ on:
       scenario:
         description: Cenario a executar
         required: true
-        default: smoke
+        default: load
         type: choice
         options:
           - smoke
@@ -81,7 +81,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "name=${{ github.event.inputs.scenario }}" >> "$GITHUB_OUTPUT"
           else
-            echo "name=smoke" >> "$GITHUB_OUTPUT"
+            echo "name=load" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install dependencies
