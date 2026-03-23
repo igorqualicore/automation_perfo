@@ -156,6 +156,25 @@ Observação:
 - 250 requisições por segundo
 - Percentil 90 da transação Compra de passagem - sucesso abaixo de 2 segundos
 
+## Leitura executiva dos relatórios
+
+Os relatórios HTML executivos passaram a apresentar o resultado do teste em três perguntas objetivas, pensadas para leitura de gestor, recrutador ou avaliador técnico.
+
+- Escalabilidade: responde se o ambiente sustentou ou não a vazão mínima exigida pelo desafio
+- Performance: responde se o tempo de resposta da transação principal ficou dentro do limite definido
+- Estabilidade: responde se o comportamento permaneceu consistente sob carga, sem erro e sem sinais relevantes de degradação entre as etapas
+
+Regras usadas nessa leitura:
+
+- Escalabilidade usa principalmente throughput HTTP medido versus meta mínima do desafio e versus alvo configurado do cenário
+- Performance usa principalmente o percentil 90 da transação de negócio versus o limite de 2 segundos
+- Estabilidade usa taxa de erro e consistência aproximada entre as etapas HTTP observadas no teste
+
+Tratamento do smoke test:
+
+- o smoke aparece como leitura técnica, sem conclusão de capacidade
+- isso acontece porque o smoke foi desenhado para validar fluxo, dados e instrumentação, não para comprovar alta carga
+
 ## Relatório de execução
 
 ### Smoke test

@@ -144,6 +144,12 @@
       border: 1px solid #f2bcbc;
     }
 
+    .status-warn {
+      background: #fff3d8;
+      color: #9b6a00;
+      border: 1px solid #f0d08a;
+    }
+
     .links {
       display: flex;
       gap: 12px;
@@ -177,7 +183,8 @@
     .summary-grid,
     .metrics-strip,
     .meta-grid,
-    .analysis-grid {
+    .analysis-grid,
+    .diagnostics-grid {
       display: grid;
       gap: 14px;
     }
@@ -185,6 +192,11 @@
     .summary-grid {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       margin-top: 22px;
+    }
+
+    .diagnostics-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-bottom: 22px;
     }
 
     .metrics-strip {
@@ -257,6 +269,56 @@
 
     .analysis-grid {
       grid-template-columns: 1fr;
+    }
+
+    .diagnostic-card {
+      border-radius: 24px;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .diagnostic-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .diagnostic-kicker {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .diag-pass {
+      box-shadow: inset 0 0 0 1px rgba(25, 122, 67, 0.08), var(--shadow);
+    }
+
+    .diag-fail {
+      box-shadow: inset 0 0 0 1px rgba(183, 58, 58, 0.08), var(--shadow);
+    }
+
+    .diag-warn {
+      box-shadow: inset 0 0 0 1px rgba(155, 106, 0, 0.08), var(--shadow);
+    }
+
+    .evidence-list {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--text);
+    }
+
+    .evidence-list li {
+      margin-bottom: 8px;
     }
 
     .fail-chip,
@@ -421,6 +483,111 @@
       <article class="metric-box"><span>Meta minima do desafio</span><strong>250 req/s</strong></article>
       <article class="metric-box"><span>Alvo configurado do cenario</span><strong>480 req/s</strong></article>
       <article class="metric-box"><span>P90 da transacao</span><strong>1404 ms</strong></article>
+    </section>
+    <section class="diagnostics-grid">
+      
+      <article class="diagnostic-card diag-fail">
+        <div class="diagnostic-header">
+          <div>
+            <span class="diagnostic-kicker">Escalabilidade</span>
+            <h3>Aguenta carga alta?</h3>
+          </div>
+          <span class="status-pill status-fail">Capacidade abaixo da meta</span>
+        </div>
+        <p class="panel-note">O ambiente nao sustentou a vazao minima definida pelo desafio durante a janela analisada.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Meta do desafio</span>
+        <strong>250 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 52.083333333333336%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Alvo do cenario</span>
+        <strong>480 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 100%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Throughput medido</span>
+        <strong>119,85 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 24.968749999999996%;"></div></div>
+    </div></div>
+        <ul class="evidence-list">
+            <li>Meta minima do desafio: 250 req/s</li>
+            <li>Throughput medido: 119,85 req/s</li>
+            <li>Entrega equivalente a 47,9% da meta do desafio e 25% do alvo configurado do cenario</li>
+        </ul>
+      </article>
+      <article class="diagnostic-card diag-pass">
+        <div class="diagnostic-header">
+          <div>
+            <span class="diagnostic-kicker">Performance</span>
+            <h3>Responde rapido?</h3>
+          </div>
+          <span class="status-pill status-pass">Tempo de resposta aderente</span>
+        </div>
+        <p class="panel-note">A latencia da transacao principal permaneceu dentro do limite definido pelo desafio.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Limite de p90</span>
+        <strong>2.000 ms</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 100%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>P90 medido</span>
+        <strong>1.404 ms</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-pass" style="width: 70.19999999999999%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Media da transacao</span>
+        <strong>1.238,36 ms</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 61.91799999999999%;"></div></div>
+    </div></div>
+        <ul class="evidence-list">
+            <li>P90 da transacao de negocio: 1404 ms</li>
+            <li>Meta de performance: abaixo de 2000 ms</li>
+            <li>Tempo medio da transacao: 1238.36 ms</li>
+        </ul>
+      </article>
+      <article class="diagnostic-card diag-pass">
+        <div class="diagnostic-header">
+          <div>
+            <span class="diagnostic-kicker">Estabilidade</span>
+            <h3>Nao degrada sob pressao?</h3>
+          </div>
+          <span class="status-pill status-pass">Operacao estavel sob carga</span>
+        </div>
+        <p class="panel-note">O teste terminou sem erros e com comportamento consistente entre as etapas HTTP observadas.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Erro maximo aceitavel</span>
+        <strong>0,01 %</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 2%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Erro medido</span>
+        <strong>0 %</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-pass" style="width: 2%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>P90 HTTP</span>
+        <strong>388 ms</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 100%;"></div></div>
+    </div></div>
+        <ul class="evidence-list">
+            <li>Taxa de erro: 0.00%</li>
+            <li>Maior latencia observada na transacao: 3138 ms</li>
+            <li>Consistencia entre etapas HTTP: 99,7% de alinhamento aproximado</li>
+        </ul>
+      </article>
     </section>
     <section class="content-grid">
       <article class="panel">

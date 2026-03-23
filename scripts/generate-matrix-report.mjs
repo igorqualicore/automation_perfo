@@ -73,6 +73,7 @@ function buildHtml(summaries) {
       ? failedRequirements.map((item) => `<span class="fail-chip">${escapeHtml(item)}</span>`).join(' ')
       : '<span class="pass-chip">Todos os requisitos atendidos</span>';
     const comparison = getTimeComparison(summary);
+    const diagnostics = buildDiagnostics(summary);
     const throughputBars = buildComparisonBars([
       {
         label: 'Meta minima do desafio',
@@ -107,6 +108,18 @@ function buildHtml(summaries) {
         suffix: 's'
       }
     ]);
+    const diagnosticsCards = diagnostics.map((item) => `
+      <article class="diagnostic-card ${item.toneClass}">
+        <div class="diagnostic-header">
+          <div>
+            <span class="diagnostic-kicker">${escapeHtml(item.label)}</span>
+            <h3>${escapeHtml(item.question)}</h3>
+          </div>
+          <span class="status-pill ${item.toneClass === 'diag-pass' ? 'status-pass' : item.toneClass === 'diag-warn' ? 'status-warn' : 'status-fail'}">${escapeHtml(item.answer)}</span>
+        </div>
+        <p class="panel-note">${escapeHtml(item.summary)}</p>
+        ${buildComparisonBars(item.chartItems)}
+      </article>`).join('');
 
     return `
     <section class="card">
@@ -150,6 +163,9 @@ function buildHtml(summaries) {
           ${timeBars}
         </section>
       </div>
+      <section class="diagnostics-grid">
+        ${diagnosticsCards}
+      </section>
       <section class="panel chart-panel">
         <h3>Grafico comparativo de throughput</h3>
         <p class="panel-note">Comparacao entre a meta minima do desafio, o alvo configurado no cenario e o throughput realmente entregue.</p>
@@ -403,6 +419,13 @@ function buildHtml(summaries) {
       margin-bottom: 18px;
     }
 
+    .diagnostics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
     .metric-box {
       padding: 14px;
       border-radius: 18px;
@@ -452,6 +475,50 @@ function buildHtml(summaries) {
     .panel-note {
       margin: 0 0 12px;
       color: var(--muted);
+    }
+
+    .diagnostic-card {
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border);
+    }
+
+    .diagnostic-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .diagnostic-kicker {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .diag-pass {
+      box-shadow: inset 0 0 0 1px rgba(25, 122, 67, 0.08);
+    }
+
+    .diag-fail {
+      box-shadow: inset 0 0 0 1px rgba(183, 58, 58, 0.08);
+    }
+
+    .diag-warn {
+      box-shadow: inset 0 0 0 1px rgba(155, 106, 0, 0.08);
+    }
+
+    .status-warn {
+      background: #fff3d8;
+      color: #9b6a00;
+      border: 1px solid #f0d08a;
     }
 
     .chart-panel {
@@ -667,4 +734,103 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function buildDiagnostics(summary) {
+  const challengeTarget = summary.acceptanceCriteria.minimumHttpRps;
+  const measuredRps = Number(summary.measuredHttpRps) || 0;
+  const scenarioTarget = Number(summary.targetHttpRps) || 0;
+  const throughputVsChallenge = challengeTarget > 0 ? measuredRps / challengeTarget : 0;
+  const throughputVsScenario = scenarioTarget > 0 ? measuredRps / scenarioTarget : 0;
+  const performancePass = summary.businessMetrics.p90 < summary.acceptanceCriteria.p90UnderMs;
+  const stabilityPass = isStable(summary);
+  const smokeScenario = String(summary.scenario).toLowerCase() === 'smoke';
+
+  const scalability = smokeScenario
+    ? {
+        label: 'Escalabilidade',
+        question: 'Aguenta carga alta?',
+        answer: 'Leitura tecnica, sem conclusao de capacidade',
+        toneClass: 'diag-warn',
+        summary: 'O smoke valida fluxo e instrumentacao. Nao deve ser usado como evidencia de capacidade em alta carga.',
+        chartItems: [
+          { label: 'Meta do desafio', value: challengeTarget, colorClass: 'bar-target', suffix: 'req/s' },
+          { label: 'Alvo do smoke', value: scenarioTarget, colorClass: 'bar-scenario', suffix: 'req/s' },
+          { label: 'Medido no smoke', value: measuredRps, colorClass: 'bar-fail', suffix: 'req/s' }
+        ]
+      }
+    : {
+        label: 'Escalabilidade',
+        question: 'Aguenta carga alta?',
+        answer: throughputVsChallenge >= 1 ? 'Capacidade aderente a meta' : 'Capacidade abaixo da meta',
+        toneClass: throughputVsChallenge >= 1 ? 'diag-pass' : 'diag-fail',
+        summary: throughputVsChallenge >= 1
+          ? 'Sustentou a vazao minima definida pelo desafio.'
+          : `Entregou ${formatPercent(throughputVsChallenge)} da meta do desafio e ${formatPercent(throughputVsScenario)} do alvo configurado do cenario.`,
+        chartItems: [
+          { label: 'Meta do desafio', value: challengeTarget, colorClass: 'bar-target', suffix: 'req/s' },
+          { label: 'Alvo do cenario', value: scenarioTarget, colorClass: 'bar-scenario', suffix: 'req/s' },
+          { label: 'Throughput medido', value: measuredRps, colorClass: throughputVsChallenge >= 1 ? 'bar-pass' : 'bar-fail', suffix: 'req/s' }
+        ]
+      };
+
+  const performance = {
+    label: 'Performance',
+    question: 'Responde rapido?',
+    answer: performancePass ? 'Tempo de resposta aderente' : 'Tempo de resposta acima do limite',
+    toneClass: performancePass ? 'diag-pass' : 'diag-fail',
+    summary: performancePass
+      ? `P90 de ${summary.businessMetrics.p90} ms, dentro do teto de ${summary.acceptanceCriteria.p90UnderMs} ms.`
+      : `P90 de ${summary.businessMetrics.p90} ms, acima do teto de ${summary.acceptanceCriteria.p90UnderMs} ms.`,
+    chartItems: [
+      { label: 'Limite de p90', value: summary.acceptanceCriteria.p90UnderMs, colorClass: 'bar-target', suffix: 'ms' },
+      { label: 'P90 medido', value: summary.businessMetrics.p90, colorClass: performancePass ? 'bar-pass' : 'bar-fail', suffix: 'ms' },
+      { label: 'Media da transacao', value: summary.businessMetrics.avg, colorClass: 'bar-scenario', suffix: 'ms' }
+    ]
+  };
+
+  const stability = {
+    label: 'Estabilidade',
+    question: 'Nao degrada sob pressao?',
+    answer: stabilityPass ? 'Operacao estavel sob carga' : 'Indicio de degradacao sob carga',
+    toneClass: stabilityPass ? 'diag-pass' : 'diag-fail',
+    summary: stabilityPass
+      ? `Teste sem erros e com alinhamento aproximado de ${formatPercent(getStabilitySpread(summary))} entre as etapas HTTP.`
+      : `Ha sinais de degradacao. Taxa de erro de ${(summary.businessMetrics.errorRate * 100).toFixed(2)}% e alinhamento aproximado de ${formatPercent(getStabilitySpread(summary))}.`,
+    chartItems: [
+      { label: 'Erro maximo aceitavel', value: 0.01, colorClass: 'bar-target', suffix: '%' },
+      { label: 'Erro medido', value: summary.businessMetrics.errorRate * 100, colorClass: stabilityPass ? 'bar-pass' : 'bar-fail', suffix: '%' },
+      { label: 'P90 HTTP', value: summary.requestMetrics.p90, colorClass: 'bar-scenario', suffix: 'ms' }
+    ]
+  };
+
+  return [scalability, performance, stability];
+}
+
+function isStable(summary) {
+  return summary.businessMetrics.errorRate === 0 && getStabilitySpread(summary) >= 0.85;
+}
+
+function getStabilitySpread(summary) {
+  const httpSteps = Object.entries(summary.samplesByLabel)
+    .filter(([label]) => label !== summary.transactionLabel)
+    .map(([, metrics]) => Number(metrics.throughput) || 0)
+    .filter((value) => value > 0);
+
+  if (httpSteps.length < 2) {
+    return 1;
+  }
+
+  const min = Math.min(...httpSteps);
+  const max = Math.max(...httpSteps);
+
+  if (max === 0) {
+    return 0;
+  }
+
+  return min / max;
+}
+
+function formatPercent(value) {
+  return `${formatNumber((Number(value) || 0) * 100, 1)}%`;
 }

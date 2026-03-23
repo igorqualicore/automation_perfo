@@ -19,6 +19,7 @@ function renderHtmlSummary(summary, currentScenario) {
   const challengeTarget = summary.acceptanceCriteria.minimumHttpRps;
   const scenarioTarget = summary.targetHttpRps;
   const timeComparison = getTimeComparison(summary);
+  const diagnostics = buildDiagnostics(summary, currentScenario);
   const requirements = [
     {
       label: `Throughput HTTP minimo do desafio: ${challengeTarget} req/s`,
@@ -97,6 +98,27 @@ function renderHtmlSummary(summary, currentScenario) {
       suffix: 's'
     }
   ]);
+
+  const diagnosticsCards = diagnostics.map((item) => {
+    const chart = buildComparisonBars(item.chartItems);
+    const evidence = item.evidence.map((entry) => `
+            <li>${escapeHtml(entry)}</li>`).join('');
+
+    return `
+      <article class="diagnostic-card ${item.toneClass}">
+        <div class="diagnostic-header">
+          <div>
+            <span class="diagnostic-kicker">${escapeHtml(item.label)}</span>
+            <h3>${escapeHtml(item.question)}</h3>
+          </div>
+          <span class="status-pill ${item.toneClass === 'diag-pass' ? 'status-pass' : item.toneClass === 'diag-warn' ? 'status-warn' : 'status-fail'}">${escapeHtml(item.answer)}</span>
+        </div>
+        <p class="panel-note">${escapeHtml(item.summary)}</p>
+        ${chart}
+        <ul class="evidence-list">${evidence}
+        </ul>
+      </article>`;
+  }).join('');
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -244,6 +266,12 @@ function renderHtmlSummary(summary, currentScenario) {
       border: 1px solid #f2bcbc;
     }
 
+    .status-warn {
+      background: #fff3d8;
+      color: #9b6a00;
+      border: 1px solid #f0d08a;
+    }
+
     .links {
       display: flex;
       gap: 12px;
@@ -277,7 +305,8 @@ function renderHtmlSummary(summary, currentScenario) {
     .summary-grid,
     .metrics-strip,
     .meta-grid,
-    .analysis-grid {
+    .analysis-grid,
+    .diagnostics-grid {
       display: grid;
       gap: 14px;
     }
@@ -285,6 +314,11 @@ function renderHtmlSummary(summary, currentScenario) {
     .summary-grid {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       margin-top: 22px;
+    }
+
+    .diagnostics-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-bottom: 22px;
     }
 
     .metrics-strip {
@@ -357,6 +391,56 @@ function renderHtmlSummary(summary, currentScenario) {
 
     .analysis-grid {
       grid-template-columns: 1fr;
+    }
+
+    .diagnostic-card {
+      border-radius: 24px;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .diagnostic-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .diagnostic-kicker {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .diag-pass {
+      box-shadow: inset 0 0 0 1px rgba(25, 122, 67, 0.08), var(--shadow);
+    }
+
+    .diag-fail {
+      box-shadow: inset 0 0 0 1px rgba(183, 58, 58, 0.08), var(--shadow);
+    }
+
+    .diag-warn {
+      box-shadow: inset 0 0 0 1px rgba(155, 106, 0, 0.08), var(--shadow);
+    }
+
+    .evidence-list {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--text);
+    }
+
+    .evidence-list li {
+      margin-bottom: 8px;
     }
 
     .fail-chip,
@@ -522,6 +606,9 @@ function renderHtmlSummary(summary, currentScenario) {
       <article class="metric-box"><span>Alvo configurado do cenario</span><strong>${scenarioTarget} req/s</strong></article>
       <article class="metric-box"><span>P90 da transacao</span><strong>${summary.businessMetrics.p90} ms</strong></article>
     </section>
+    <section class="diagnostics-grid">
+      ${diagnosticsCards}
+    </section>
     <section class="content-grid">
       <article class="panel">
         <h2>Atendimento aos requisitos</h2>
@@ -643,4 +730,123 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function buildDiagnostics(summary, currentScenario) {
+  const challengeTarget = summary.acceptanceCriteria.minimumHttpRps;
+  const measuredRps = Number(summary.measuredHttpRps) || 0;
+  const scenarioTarget = Number(summary.targetHttpRps) || 0;
+  const throughputVsChallenge = challengeTarget > 0 ? measuredRps / challengeTarget : 0;
+  const throughputVsScenario = scenarioTarget > 0 ? measuredRps / scenarioTarget : 0;
+  const performancePass = summary.businessMetrics.p90 < summary.acceptanceCriteria.p90UnderMs;
+  const stabilityPass = isStable(summary);
+  const smokeScenario = String(currentScenario).toLowerCase() === 'smoke';
+
+  const scalability = smokeScenario
+    ? {
+        label: 'Escalabilidade',
+        question: 'Aguenta carga alta?',
+        answer: 'Leitura tecnica, sem conclusao de capacidade',
+        toneClass: 'diag-warn',
+        summary: 'Este cenario foi mantido propositalmente leve para validar fluxo, massa de dados e instrumentacao do teste. Ele nao deve ser usado como evidencia de capacidade em alta carga.',
+        evidence: [
+          `Alvo tecnico do smoke: ${formatNumber(scenarioTarget)} req/s`,
+          `Throughput medido: ${formatNumber(measuredRps)} req/s`,
+          `Meta do desafio para carga alta: ${challengeTarget} req/s`
+        ],
+        chartItems: [
+          { label: 'Meta do desafio', value: challengeTarget, colorClass: 'bar-target', suffix: 'req/s' },
+          { label: 'Alvo do smoke', value: scenarioTarget, colorClass: 'bar-scenario', suffix: 'req/s' },
+          { label: 'Medido no smoke', value: measuredRps, colorClass: 'bar-fail', suffix: 'req/s' }
+        ]
+      }
+    : {
+        label: 'Escalabilidade',
+        question: 'Aguenta carga alta?',
+        answer: throughputVsChallenge >= 1 ? 'Capacidade aderente a meta' : 'Capacidade abaixo da meta',
+        toneClass: throughputVsChallenge >= 1 ? 'diag-pass' : 'diag-fail',
+        summary: throughputVsChallenge >= 1
+          ? 'O ambiente sustentou a vazao minima definida pelo desafio durante a janela analisada.'
+          : 'O ambiente nao sustentou a vazao minima definida pelo desafio durante a janela analisada.',
+        evidence: [
+          `Meta minima do desafio: ${challengeTarget} req/s`,
+          `Throughput medido: ${formatNumber(measuredRps)} req/s`,
+          `Entrega equivalente a ${formatPercent(throughputVsChallenge)} da meta do desafio e ${formatPercent(throughputVsScenario)} do alvo configurado do cenario`
+        ],
+        chartItems: [
+          { label: 'Meta do desafio', value: challengeTarget, colorClass: 'bar-target', suffix: 'req/s' },
+          { label: 'Alvo do cenario', value: scenarioTarget, colorClass: 'bar-scenario', suffix: 'req/s' },
+          { label: 'Throughput medido', value: measuredRps, colorClass: throughputVsChallenge >= 1 ? 'bar-pass' : 'bar-fail', suffix: 'req/s' }
+        ]
+      };
+
+  const performance = {
+    label: 'Performance',
+    question: 'Responde rapido?',
+    answer: performancePass ? 'Tempo de resposta aderente' : 'Tempo de resposta acima do limite',
+    toneClass: performancePass ? 'diag-pass' : 'diag-fail',
+    summary: performancePass
+      ? 'A latencia da transacao principal permaneceu dentro do limite definido pelo desafio.'
+      : 'A latencia da transacao principal ultrapassou o limite definido pelo desafio.',
+    evidence: [
+      `P90 da transacao de negocio: ${summary.businessMetrics.p90} ms`,
+      `Meta de performance: abaixo de ${summary.acceptanceCriteria.p90UnderMs} ms`,
+      `Tempo medio da transacao: ${summary.businessMetrics.avg} ms`
+    ],
+    chartItems: [
+      { label: 'Limite de p90', value: summary.acceptanceCriteria.p90UnderMs, colorClass: 'bar-target', suffix: 'ms' },
+      { label: 'P90 medido', value: summary.businessMetrics.p90, colorClass: performancePass ? 'bar-pass' : 'bar-fail', suffix: 'ms' },
+      { label: 'Media da transacao', value: summary.businessMetrics.avg, colorClass: 'bar-scenario', suffix: 'ms' }
+    ]
+  };
+
+  const stability = {
+    label: 'Estabilidade',
+    question: 'Nao degrada sob pressao?',
+    answer: stabilityPass ? 'Operacao estavel sob carga' : 'Indicio de degradacao sob carga',
+    toneClass: stabilityPass ? 'diag-pass' : 'diag-fail',
+    summary: stabilityPass
+      ? 'O teste terminou sem erros e com comportamento consistente entre as etapas HTTP observadas.'
+      : 'O teste apresentou sinais de degradacao, seja por erro ou por desequilibrio entre as etapas observadas.',
+    evidence: [
+      `Taxa de erro: ${(summary.businessMetrics.errorRate * 100).toFixed(2)}%`,
+      `Maior latencia observada na transacao: ${summary.businessMetrics.max} ms`,
+      `Consistencia entre etapas HTTP: ${formatPercent(getStabilitySpread(summary))} de alinhamento aproximado`
+    ],
+    chartItems: [
+      { label: 'Erro maximo aceitavel', value: 0.01, colorClass: 'bar-target', suffix: '%' },
+      { label: 'Erro medido', value: summary.businessMetrics.errorRate * 100, colorClass: stabilityPass ? 'bar-pass' : 'bar-fail', suffix: '%' },
+      { label: 'P90 HTTP', value: summary.requestMetrics.p90, colorClass: 'bar-scenario', suffix: 'ms' }
+    ]
+  };
+
+  return [scalability, performance, stability];
+}
+
+function isStable(summary) {
+  return summary.businessMetrics.errorRate === 0 && getStabilitySpread(summary) >= 0.85;
+}
+
+function getStabilitySpread(summary) {
+  const httpSteps = Object.entries(summary.samplesByLabel)
+    .filter(([label]) => label !== summary.transactionLabel)
+    .map(([, metrics]) => Number(metrics.throughput) || 0)
+    .filter((value) => value > 0);
+
+  if (httpSteps.length < 2) {
+    return 1;
+  }
+
+  const min = Math.min(...httpSteps);
+  const max = Math.max(...httpSteps);
+
+  if (max === 0) {
+    return 0;
+  }
+
+  return min / max;
+}
+
+function formatPercent(value) {
+  return `${formatNumber((Number(value) || 0) * 100, 1)}%`;
 }
