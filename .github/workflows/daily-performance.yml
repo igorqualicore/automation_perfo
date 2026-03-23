@@ -1,6 +1,9 @@
 name: Daily Performance Baseline
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       scenario:

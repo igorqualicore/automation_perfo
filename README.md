@@ -112,10 +112,11 @@ O repositório agora possui uma workflow GitHub Actions em [.github/workflows/da
 
 Comportamento da pipeline:
 
+- executa automaticamente a cada push na branch main
 - executa diariamente às 08:00 no horário de Brasília
 - usa o cron 11:00 UTC no GitHub Actions
 - roda em Windows, macOS e Linux
-- executa smoke test por padrão no agendamento
+- executa smoke test por padrão no push e no agendamento
 - permite execução manual via workflow_dispatch com seleção de cenário smoke, load ou spike
 - publica um HTML consolidado com os 3 sistemas operacionais
 
