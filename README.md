@@ -81,6 +81,7 @@ npm run report:matrix
 
 Cada execução gera os artefatos abaixo em reports/<cenario>:
 
+- index.html: relatorio executivo HTML do cenario
 - results.jtl: resultados brutos do JMeter
 - dashboard: dashboard HTML do JMeter
 - summary.json: resumo numérico consolidado
@@ -90,14 +91,20 @@ Cada execução gera os artefatos abaixo em reports/<cenario>:
 
 Smoke:
 
-- [reports/smoke/dashboard/index.html](reports/smoke/dashboard/index.html)
+- [reports/smoke/index.html](reports/smoke/index.html)
 
 Carga:
 
-- [reports/load/dashboard/index.html](reports/load/dashboard/index.html)
+- [reports/load/index.html](reports/load/index.html)
 
 Pico:
 
+- [reports/spike/index.html](reports/spike/index.html)
+
+Dashboards tecnicos do JMeter:
+
+- [reports/smoke/dashboard/index.html](reports/smoke/dashboard/index.html)
+- [reports/load/dashboard/index.html](reports/load/dashboard/index.html)
 - [reports/spike/dashboard/index.html](reports/spike/dashboard/index.html)
 
 Exemplo para abrir localmente no Windows:
@@ -131,7 +138,7 @@ Como abrir corretamente o relatório consolidado:
 
 - faça o download e extraia o artifact consolidated-html-report inteiro
 - abra o arquivo consolidated/report/index.html mantendo as pastas linux, windows e macos no mesmo nível de consolidated/report
-- os links Abrir dashboard do HTML consolidado dependem dessa estrutura relativa para funcionar
+- os links Abrir relatório individual do HTML consolidado dependem dessa estrutura relativa para funcionar
 
 Observação:
 
@@ -199,7 +206,7 @@ Leitura do resultado:
 
 Conclusão do teste de carga:
 
-- o critério de aceitação não foi atendido
+- status no desafio: Reprovado no desafio
 - o principal motivo foi a vazão sustentada de aproximadamente 69.94 req/s, inferior ao mínimo de 250 req/s
 - apesar disso, o comportamento de latência e a ausência de erros indicam que o gargalo observado está ligado à capacidade de throughput do ambiente sob teste e ou do ambiente local de execução da carga, não a uma falha funcional do fluxo
 
@@ -231,7 +238,7 @@ Leitura do resultado:
 
 Conclusão do teste de pico:
 
-- o critério de aceitação não foi atendido
+- status no desafio: Reprovado no desafio
 - mesmo com maior agressividade de entrada, o sistema manteve boa latência e ausência de erros
 - a principal limitação continuou sendo a vazão sustentada, com aproximadamente 119.85 req/s, inferior ao mínimo de 250 req/s
 
@@ -250,7 +257,7 @@ Com base na execução real consolidada neste repositório:
 - o critério de latência foi atendido nas execuções de carga e pico realizadas
 - o critério de throughput de 250 req/s não foi atendido nem no teste de carga nem no teste de pico
 
-Portanto, com a evidência atual, o critério de aceitação do desafio foi não satisfatório.
+Status final no desafio: Reprovado no desafio.
 
 ## Gherkin do cenário
 

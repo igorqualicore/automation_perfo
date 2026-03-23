@@ -22,7 +22,7 @@ const summaries = osDirectories.map((directory) => {
   return {
     os: path.basename(directory),
     summary,
-    dashboardRelativePath: `${path.basename(directory)}/dashboard/index.html`
+    reportRelativePath: `${path.basename(directory)}/index.html`
   };
 });
 
@@ -36,12 +36,17 @@ function buildHtml(summaries) {
     timeZone: 'America/Sao_Paulo'
   }).format(new Date());
 
-  const rows = summaries.map(({ os, summary, dashboardRelativePath }) => {
-    const acceptance = summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Nao atende aos requisitos';
+  const rows = summaries.map(({ os, summary, reportRelativePath }) => {
+    const acceptance = summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Reprovado no desafio';
+    const failedRequirements = getFailedRequirements(summary);
+    const failedRequirementsMarkup = failedRequirements.length > 0
+      ? failedRequirements.map((item) => `<span class="fail-chip">${escapeHtml(item)}</span>`).join(' ')
+      : '<span class="pass-chip">Nenhuma</span>';
     return `
       <tr>
         <td>${escapeHtml(os)}</td>
         <td>${escapeHtml(summary.testName)}</td>
+        <td>${summary.targetHttpRps} req/s</td>
         <td>${escapeHtml(summary.execution.startAt)}</td>
         <td>${escapeHtml(summary.execution.endAt)}</td>
         <td>${escapeHtml(summary.execution.totalDurationHuman)}</td>
@@ -49,22 +54,33 @@ function buildHtml(summaries) {
         <td>${summary.businessMetrics.p90} ms</td>
         <td>${(summary.businessMetrics.errorRate * 100).toFixed(2)}%</td>
         <td>${escapeHtml(acceptance)}</td>
-        <td><a href="../${dashboardRelativePath}">Abrir dashboard</a></td>
+        <td>${failedRequirementsMarkup}</td>
+        <td><a href="../${reportRelativePath}">Abrir relatorio individual</a></td>
       </tr>`;
   }).join('');
 
-  const detailSections = summaries.map(({ os, summary }) => `
+  const detailSections = summaries.map(({ os, summary }) => {
+    const failedRequirements = getFailedRequirements(summary);
+    const failedDetails = failedRequirements.length > 0
+      ? failedRequirements.map((item) => `<span class="fail-chip">${escapeHtml(item)}</span>`).join(' ')
+      : '<span class="pass-chip">Nenhuma falha</span>';
+
+    return `
     <section class="card">
       <h2>${escapeHtml(os)}</h2>
       <p><strong>Cenario:</strong> ${escapeHtml(summary.scenario)}</p>
+      <p><strong>Alvo do cenario:</strong> ${summary.targetHttpRps} req/s</p>
+      <p><strong>Meta minima do desafio:</strong> ${summary.acceptanceCriteria.minimumHttpRps} req/s</p>
       <p><strong>Inicio:</strong> ${escapeHtml(summary.execution.startAt)}</p>
       <p><strong>Fim:</strong> ${escapeHtml(summary.execution.endAt)}</p>
       <p><strong>Duracao:</strong> ${escapeHtml(summary.execution.totalDurationHuman)}</p>
       <p><strong>Throughput HTTP:</strong> ${summary.measuredHttpRps} req/s</p>
       <p><strong>P90 da transacao:</strong> ${summary.businessMetrics.p90} ms</p>
       <p><strong>Taxa de erro:</strong> ${(summary.businessMetrics.errorRate * 100).toFixed(2)}%</p>
-      <p><strong>Status:</strong> ${summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Nao atende aos requisitos'}</p>
-    </section>`).join('');
+      <p><strong>Status:</strong> ${summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Reprovado no desafio'}</p>
+      <p><strong>Falhas encontradas:</strong> ${failedDetails}</p>
+    </section>`;
+  }).join('');
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -159,6 +175,28 @@ function buildHtml(summaries) {
       margin: 8px 0;
     }
 
+    .fail-chip,
+    .pass-chip {
+      display: inline-block;
+      margin: 4px 6px 0 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .fail-chip {
+      background: #fde2e2;
+      color: #a63d40;
+      border: 1px solid #efb3b5;
+    }
+
+    .pass-chip {
+      background: #dff3e4;
+      color: #2f7d4f;
+      border: 1px solid #a9d3b5;
+    }
+
     a {
       color: var(--accent);
       text-decoration: none;
@@ -183,7 +221,8 @@ function buildHtml(summaries) {
       <p>Execucao agendada diariamente as 08:00 no horario de Brasilia, equivalente a 11:00 UTC.</p>
       <p>Gerado em: ${escapeHtml(generatedAt)}</p>
       <p>Este relatorio consolida os resultados de Windows, macOS e Linux em um unico HTML.</p>
-      <p>Os links de dashboard funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
+      <p>O status final sempre compara o resultado com a meta minima do desafio de 250 req/s, p90 abaixo de 2000 ms e 0% de erro. O alvo do cenario mostra apenas o quanto cada teste tentou forcar o ambiente.</p>
+      <p>Os links funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
     </section>
 
     <table>
@@ -191,6 +230,7 @@ function buildHtml(summaries) {
         <tr>
           <th>Sistema operacional</th>
           <th>Teste</th>
+          <th>Alvo do cenario</th>
           <th>Inicio</th>
           <th>Fim</th>
           <th>Duracao</th>
@@ -198,7 +238,8 @@ function buildHtml(summaries) {
           <th>P90 da transacao</th>
           <th>Erros</th>
           <th>Atendimento aos requisitos</th>
-          <th>Dashboard</th>
+          <th>Falhas encontradas</th>
+          <th>Relatorio individual</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -208,6 +249,24 @@ function buildHtml(summaries) {
   </main>
 </body>
 </html>`;
+}
+
+function getFailedRequirements(summary) {
+  const failed = [];
+
+  if (summary.measuredHttpRps < summary.acceptanceCriteria.minimumHttpRps) {
+    failed.push(`Throughput abaixo de ${summary.acceptanceCriteria.minimumHttpRps} req/s`);
+  }
+
+  if (summary.businessMetrics.p90 >= summary.acceptanceCriteria.p90UnderMs) {
+    failed.push(`P90 acima de ${summary.acceptanceCriteria.p90UnderMs} ms`);
+  }
+
+  if (summary.businessMetrics.errorRate !== 0) {
+    failed.push('Taxa de erro acima de 0%');
+  }
+
+  return failed;
 }
 
 function escapeHtml(value) {

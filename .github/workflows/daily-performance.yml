@@ -96,6 +96,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "artifacts/${{ matrix.artifact_name }}"
+          cp "reports/${{ steps.scenario.outputs.name }}/index.html" "artifacts/${{ matrix.artifact_name }}/index.html"
           cp "reports/${{ steps.scenario.outputs.name }}/summary.json" "artifacts/${{ matrix.artifact_name }}/summary.json"
           cp "reports/${{ steps.scenario.outputs.name }}/summary.md" "artifacts/${{ matrix.artifact_name }}/summary.md"
           cp -R "reports/${{ steps.scenario.outputs.name }}/dashboard" "artifacts/${{ matrix.artifact_name }}/dashboard"

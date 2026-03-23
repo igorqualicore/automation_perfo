@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BlazeDemo - Smoke - Relatorio executivo</title>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --panel: #fffaf3;
+      --ink: #1f2933;
+      --muted: #5f6c7a;
+      --line: #d9cbb7;
+      --brand: #9a3412;
+      --brand-soft: #f4d7bf;
+      --ok: #216e39;
+      --ok-soft: #dff3e4;
+      --bad: #a61b1b;
+      --bad-soft: #fde2e2;
+      --shadow: 0 18px 48px rgba(55, 35, 15, 0.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, rgba(154, 52, 18, 0.10), transparent 28%), linear-gradient(180deg, #f8f2ea 0%, var(--bg) 100%);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    main { max-width: 1160px; margin: 0 auto; padding: 28px 20px 44px; }
+    .hero, .panel, table { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .hero { border-radius: 24px; padding: 28px; margin-bottom: 22px; }
+    .eyebrow { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    h1, h2 { margin: 10px 0 12px; }
+    p { color: var(--muted); }
+    .status-banner { margin-top: 18px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line); font-weight: 700; }
+    .status-banner.pass { background: var(--ok-soft); color: var(--ok); border-color: #acd8b8; }
+    .status-banner.fail { background: var(--bad-soft); color: var(--bad); border-color: #f2bcbc; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 0 0 22px; }
+    .panel { border-radius: 20px; padding: 20px; }
+    .metric-label { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; }
+    .metric-value { font-size: 2rem; font-weight: 700; color: var(--ink); }
+    .metric-note { margin-top: 8px; color: var(--muted); font-size: 0.95rem; }
+    .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; margin-bottom: 22px; }
+    .requirements { list-style: none; padding: 0; margin: 0; }
+    .requirement { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .requirement:last-child { border-bottom: 0; }
+    .requirement small { grid-column: 1 / -1; color: var(--muted); }
+    .requirement.pass strong { color: var(--ok); }
+    .requirement.fail strong { color: var(--bad); }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .meta-item { padding: 12px; border-radius: 14px; background: #f9f3eb; border: 1px solid var(--line); }
+    .meta-item span { display: block; color: var(--muted); font-size: 0.85rem; margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; border-radius: 20px; overflow: hidden; }
+    th, td { padding: 14px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { background: var(--brand-soft); color: var(--brand); }
+    .links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .button { display: inline-block; padding: 12px 16px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; font-weight: 700; color: var(--ink); background: white; }
+    .button.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .footnote { margin-top: 12px; font-size: 0.92rem; color: var(--muted); }
+    @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } .meta { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="eyebrow">Relatorio executivo</span>
+      <h1>BlazeDemo - Smoke</h1>
+      <p>Resumo visual do cenario smoke com foco nos requisitos do desafio. O dashboard do JMeter continua disponivel como anexo tecnico.</p>
+      <p>A aprovacao final sempre considera a meta minima do desafio de 250 req/s. O alvo configurado do cenario mostra o quanto a carga tentou forcar o sistema: neste caso, 8 req/s.</p>
+      <div class="status-banner fail">Reprovado no desafio</div>
+      <div class="links">
+        <a class="button primary" href="./dashboard/index.html">Abrir dashboard tecnico do JMeter</a>
+        <a class="button" href="./summary.md">Abrir resumo Markdown</a>
+        <a class="button" href="./summary.json">Abrir resumo JSON</a>
+      </div>
+      <p class="footnote">Se o dashboard tecnico estiver feio ou muito detalhado, use esta pagina como relatorio principal e o dashboard do JMeter apenas para aprofundamento.</p>
+    </section>
+    <section class="grid">
+      <article class="panel"><div class="metric-label">Throughput HTTP medido</div><div class="metric-value">2.02 req/s</div><div class="metric-note">Meta minima do desafio: 250 req/s</div></article>
+      <article class="panel"><div class="metric-label">Alvo configurado do cenario</div><div class="metric-value">8 req/s</div><div class="metric-note">Valor usado para forcar a carga neste teste</div></article>
+      <article class="panel"><div class="metric-label">P90 da transacao</div><div class="metric-value">2059 ms</div><div class="metric-note">Meta: abaixo de 2000 ms</div></article>
+      <article class="panel"><div class="metric-label">Taxa de erro</div><div class="metric-value">0.00%</div><div class="metric-note">Meta: 0.00%</div></article>
+      <article class="panel"><div class="metric-label">Compras concluidas</div><div class="metric-value">9</div><div class="metric-note">Janela analisada: 19.84s</div></article>
+    </section>
+    <section class="two-col">
+      <article class="panel"><h2>Atendimento aos requisitos</h2><ul class="requirements">
+        <li class="requirement fail">
+          <span>Throughput HTTP minimo do desafio: 250 req/s</span>
+          <strong>Falhou</strong>
+          <small>2.02 req/s medidos em um cenario com alvo configurado de 8 req/s</small>
+        </li>
+        <li class="requirement fail">
+          <span>P90 da transacao abaixo de 2000 ms</span>
+          <strong>Falhou</strong>
+          <small>2059 ms medidos</small>
+        </li>
+        <li class="requirement pass">
+          <span>Taxa de erro igual a 0%</span>
+          <strong>Passou</strong>
+          <small>0.00%</small>
+        </li></ul></article>
+      <article class="panel"><h2>Dados da execucao</h2><div class="meta"><div class="meta-item"><span>Inicio</span>23/03/2026, 01:09:16</div><div class="meta-item"><span>Fim</span>23/03/2026, 01:09:46</div><div class="meta-item"><span>Duracao total</span>30s</div><div class="meta-item"><span>Warm-up excluido</span>10s</div><div class="meta-item"><span>Media HTTP</span>398.65 ms</div><div class="meta-item"><span>P90 HTTP</span>502 ms</div></div></article>
+    </section>
+    <section>
+      <h2>Quebra por etapa</h2>
+      <table>
+        <thead><tr><th>Etapa</th><th>Amostras</th><th>Req/s</th><th>Media</th><th>P90</th><th>Erro</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>POST Confirmation</td>
+            <td>9</td>
+            <td>0.45</td>
+            <td>443 ms</td>
+            <td>836 ms</td>
+            <td>0.00%</td>
+          </tr>
+          <tr>
+            <td>POST Purchase</td>
+            <td>16</td>
+            <td>0.81</td>
+            <td>369.94 ms</td>
+            <td>477 ms</td>
+            <td>0.00%</td>
+          </tr>
+          <tr>
+            <td>Compra de passagem - sucesso</td>
+            <td>9</td>
+            <td>0.45</td>
+            <td>1732.11 ms</td>
+            <td>2059 ms</td>
+            <td>0.00%</td>
+          </tr>
+          <tr>
+            <td>GET Home</td>
+            <td>4</td>
+            <td>0.2</td>
+            <td>416.5 ms</td>
+            <td>751 ms</td>
+            <td>0.00%</td>
+          </tr>
+          <tr>
+            <td>POST Reserve</td>
+            <td>11</td>
+            <td>0.55</td>
+            <td>397.64 ms</td>
+            <td>431 ms</td>
+            <td>0.00%</td>
+          </tr></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

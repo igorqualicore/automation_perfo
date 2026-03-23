@@ -91,6 +91,28 @@
       margin: 8px 0;
     }
 
+    .fail-chip,
+    .pass-chip {
+      display: inline-block;
+      margin: 4px 6px 0 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .fail-chip {
+      background: #fde2e2;
+      color: #a63d40;
+      border: 1px solid #efb3b5;
+    }
+
+    .pass-chip {
+      background: #dff3e4;
+      color: #2f7d4f;
+      border: 1px solid #a9d3b5;
+    }
+
     a {
       color: var(--accent);
       text-decoration: none;
@@ -113,9 +135,10 @@
       <span class="legend">GitHub Actions</span>
       <h1>Relatorio consolidado de performance cross-platform</h1>
       <p>Execucao agendada diariamente as 08:00 no horario de Brasilia, equivalente a 11:00 UTC.</p>
-      <p>Gerado em: 23/03/2026, 01:48:22</p>
+      <p>Gerado em: 23/03/2026, 02:03:09</p>
       <p>Este relatorio consolida os resultados de Windows, macOS e Linux em um unico HTML.</p>
-      <p>Os links de dashboard funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
+      <p>O status final sempre compara o resultado com a meta minima do desafio de 250 req/s, p90 abaixo de 2000 ms e 0% de erro. O alvo do cenario mostra apenas o quanto cada teste tentou forcar o ambiente.</p>
+      <p>Os links funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
     </section>
 
     <table>
@@ -123,6 +146,7 @@
         <tr>
           <th>Sistema operacional</th>
           <th>Teste</th>
+          <th>Alvo do cenario</th>
           <th>Inicio</th>
           <th>Fim</th>
           <th>Duracao</th>
@@ -130,45 +154,52 @@
           <th>P90 da transacao</th>
           <th>Erros</th>
           <th>Atendimento aos requisitos</th>
-          <th>Dashboard</th>
+          <th>Falhas encontradas</th>
+          <th>Relatorio individual</th>
         </tr>
       </thead>
       <tbody>
       <tr>
         <td>linux</td>
         <td>BlazeDemo - Load</td>
+        <td>280 req/s</td>
         <td>23/03/2026, 01:10:07</td>
         <td>23/03/2026, 01:15:07</td>
         <td>5min 0s</td>
         <td>69.94</td>
         <td>1354 ms</td>
         <td>0.00%</td>
-        <td>Nao atende aos requisitos</td>
-        <td><a href="../linux/dashboard/index.html">Abrir dashboard</a></td>
+        <td>Reprovado no desafio</td>
+        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span></td>
+        <td><a href="../linux/index.html">Abrir relatorio individual</a></td>
       </tr>
       <tr>
         <td>macos</td>
         <td>BlazeDemo - Smoke</td>
+        <td>8 req/s</td>
         <td>23/03/2026, 01:09:16</td>
         <td>23/03/2026, 01:09:46</td>
         <td>30s</td>
         <td>2.02</td>
         <td>2059 ms</td>
         <td>0.00%</td>
-        <td>Nao atende aos requisitos</td>
-        <td><a href="../macos/dashboard/index.html">Abrir dashboard</a></td>
+        <td>Reprovado no desafio</td>
+        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span> <span class="fail-chip">P90 acima de 2000 ms</span></td>
+        <td><a href="../macos/index.html">Abrir relatorio individual</a></td>
       </tr>
       <tr>
         <td>windows</td>
         <td>BlazeDemo - Spike</td>
+        <td>480 req/s</td>
         <td>23/03/2026, 01:31:47</td>
         <td>23/03/2026, 01:34:48</td>
         <td>3min 0s</td>
         <td>119.85</td>
         <td>1404 ms</td>
         <td>0.00%</td>
-        <td>Nao atende aos requisitos</td>
-        <td><a href="../windows/dashboard/index.html">Abrir dashboard</a></td>
+        <td>Reprovado no desafio</td>
+        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span></td>
+        <td><a href="../windows/index.html">Abrir relatorio individual</a></td>
       </tr></tbody>
     </table>
 
@@ -176,35 +207,44 @@
     <section class="card">
       <h2>linux</h2>
       <p><strong>Cenario:</strong> load</p>
+      <p><strong>Alvo do cenario:</strong> 280 req/s</p>
+      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
       <p><strong>Inicio:</strong> 23/03/2026, 01:10:07</p>
       <p><strong>Fim:</strong> 23/03/2026, 01:15:07</p>
       <p><strong>Duracao:</strong> 5min 0s</p>
       <p><strong>Throughput HTTP:</strong> 69.94 req/s</p>
       <p><strong>P90 da transacao:</strong> 1354 ms</p>
       <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+      <p><strong>Status:</strong> Reprovado no desafio</p>
+      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span></p>
     </section>
     <section class="card">
       <h2>macos</h2>
       <p><strong>Cenario:</strong> smoke</p>
+      <p><strong>Alvo do cenario:</strong> 8 req/s</p>
+      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
       <p><strong>Inicio:</strong> 23/03/2026, 01:09:16</p>
       <p><strong>Fim:</strong> 23/03/2026, 01:09:46</p>
       <p><strong>Duracao:</strong> 30s</p>
       <p><strong>Throughput HTTP:</strong> 2.02 req/s</p>
       <p><strong>P90 da transacao:</strong> 2059 ms</p>
       <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+      <p><strong>Status:</strong> Reprovado no desafio</p>
+      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span> <span class="fail-chip">P90 acima de 2000 ms</span></p>
     </section>
     <section class="card">
       <h2>windows</h2>
       <p><strong>Cenario:</strong> spike</p>
+      <p><strong>Alvo do cenario:</strong> 480 req/s</p>
+      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
       <p><strong>Inicio:</strong> 23/03/2026, 01:31:47</p>
       <p><strong>Fim:</strong> 23/03/2026, 01:34:48</p>
       <p><strong>Duracao:</strong> 3min 0s</p>
       <p><strong>Throughput HTTP:</strong> 119.85 req/s</p>
       <p><strong>P90 da transacao:</strong> 1404 ms</p>
       <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+      <p><strong>Status:</strong> Reprovado no desafio</p>
+      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span></p>
     </section></div>
   </main>
 </body>
