@@ -7,43 +7,52 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f6f1e8;
-      --card: #fffaf2;
-      --text: #1f2a37;
-      --muted: #5b6470;
-      --border: #dbcdb8;
-      --accent: #9c4f2f;
-      --accent-soft: #f1d8c8;
-      --ok: #2f7d4f;
-      --bad: #a63d40;
+      --bg: #eef6f1;
+      --bg-alt: #f7fbf8;
+      --card: rgba(255, 255, 255, 0.92);
+      --text: #163029;
+      --muted: #5c6f68;
+      --border: #c8ddd2;
+      --accent: #1f7a5a;
+      --accent-soft: #dff2e8;
+      --ok: #197a43;
+      --ok-soft: #def5e7;
+      --bad: #b73a3a;
+      --bad-soft: #fde4e4;
+      --amber: #b7801a;
+      --shadow: 0 20px 60px rgba(25, 71, 51, 0.10);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Georgia, 'Times New Roman', serif;
-      background: linear-gradient(180deg, #f3ede2 0%, var(--bg) 100%);
+      font-family: Aptos, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(31, 122, 90, 0.14), transparent 24%),
+        radial-gradient(circle at top right, rgba(183, 58, 58, 0.10), transparent 18%),
+        linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
       color: var(--text);
     }
 
     main {
-      max-width: 1100px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 32px 20px 48px;
+      padding: 32px 20px 56px;
     }
 
-    h1, h2 {
+    h1, h2, h3 {
       margin: 0 0 12px;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.02em;
     }
 
     .hero {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
       margin-bottom: 24px;
+      backdrop-filter: blur(10px);
     }
 
     .hero p {
@@ -51,14 +60,72 @@
       color: var(--muted);
     }
 
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1;
+    }
+
+    .hero-subtitle {
+      max-width: 760px;
+      font-size: 1.02rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .summary-card,
+    .panel,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .summary-card strong {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .summary-card small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      margin-bottom: 24px;
     }
 
     th, td {
@@ -70,181 +137,563 @@
 
     th {
       background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(223, 242, 232, 0.35);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
       margin-top: 24px;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
-    }
-
-    .card p {
-      margin: 8px 0;
+      border-radius: 26px;
+      padding: 22px;
     }
 
     .fail-chip,
     .pass-chip {
       display: inline-block;
       margin: 4px 6px 0 0;
-      padding: 4px 10px;
+      padding: 7px 12px;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 700;
     }
 
     .fail-chip {
-      background: #fde2e2;
-      color: #a63d40;
-      border: 1px solid #efb3b5;
+      background: var(--bad-soft);
+      color: var(--bad);
+      border: 1px solid #f2bcbc;
     }
 
     .pass-chip {
-      background: #dff3e4;
-      color: #2f7d4f;
-      border: 1px solid #a9d3b5;
+      background: var(--ok-soft);
+      color: var(--ok);
+      border: 1px solid #a9d9bc;
     }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-pass {
+      background: var(--ok-soft);
+      color: var(--ok);
+      border: 1px solid #a9d9bc;
+    }
+
+    .status-fail {
+      background: var(--bad-soft);
+      color: var(--bad);
+      border: 1px solid #f2bcbc;
     }
 
     .legend {
-      display: inline-block;
-      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
       border-radius: 999px;
       font-size: 0.9rem;
       background: var(--accent-soft);
-      color: var(--text);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .card-kicker {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric-box {
+      padding: 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(223, 242, 232, 0.65), rgba(255, 255, 255, 0.96));
+      border: 1px solid var(--border);
+    }
+
+    .metric-box span,
+    .meta-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 6px;
+    }
+
+    .metric-box strong {
+      font-size: 1.3rem;
+    }
+
+    .meta-grid,
+    .analysis-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .meta-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 16px;
+    }
+
+    .analysis-grid {
+      grid-template-columns: 1.1fr 1fr;
+      margin-bottom: 16px;
+    }
+
+    .meta-item,
+    .panel {
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .meta-item {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border);
+    }
+
+    .panel-note {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .chart-panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(223, 242, 232, 0.55));
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.92rem;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #e7f0ea;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .bar-target {
+      background: linear-gradient(90deg, #8aa81e, #b8cb67);
+    }
+
+    .bar-scenario {
+      background: linear-gradient(90deg, #30a7a6, #72d6d0);
+    }
+
+    .bar-pass {
+      background: linear-gradient(90deg, #1c8f4c, #49c56e);
+    }
+
+    .bar-fail {
+      background: linear-gradient(90deg, #d95858, #f28c8c);
+    }
+
+    @media (max-width: 980px) {
+      .metrics-strip,
+      .meta-grid,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 20px 14px 36px;
+      }
+
+      .hero,
+      .card,
+      .summary-card {
+        padding: 18px;
+      }
     }
   </style>
 </head>
 <body>
   <main>
     <section class="hero">
-      <span class="legend">GitHub Actions</span>
-      <h1>Relatorio consolidado de performance cross-platform</h1>
-      <p>Execucao agendada diariamente as 08:00 no horario de Brasilia, equivalente a 11:00 UTC.</p>
-      <p>Gerado em: 23/03/2026, 02:03:09</p>
-      <p>Este relatorio consolida os resultados de Windows, macOS e Linux em um unico HTML.</p>
-      <p>O status final sempre compara o resultado com a meta minima do desafio de 250 req/s, p90 abaixo de 2000 ms e 0% de erro. O alvo do cenario mostra apenas o quanto cada teste tentou forcar o ambiente.</p>
-      <p>Os links funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
+      <div class="hero-top">
+        <div>
+          <span class="legend">GitHub Actions</span>
+          <h1>Performance consolidada</h1>
+          <p class="hero-subtitle">Leitura executiva dos cenarios rodando em Windows, macOS e Linux. Verde indica aprovacao no desafio. Vermelho indica reprovacao e explicita qual requisito falhou.</p>
+        </div>
+        <div class="summary-card">
+          <span>Gerado em</span>
+          <strong>23/03/2026, 02:17:40</strong>
+          <small>Execucao diaria prevista para 08:00 em Brasilia.</small>
+        </div>
+      </div>
+      <p>A regra final do desafio continua fixa: minimo de 250 req/s, p90 abaixo de 2000 ms e taxa de erro em 0%.</p>
+      <p>Tambem mostramos quanto tempo seria necessario para completar 250 requisicoes no ritmo esperado e quanto tempo foi necessario no ritmo realmente medido.</p>
+      <div class="summary-grid">
+        <article class="summary-card">
+          <span>Cenarios avaliados</span>
+          <strong>3</strong>
+          <small>Windows, macOS e Linux</small>
+        </article>
+        <article class="summary-card">
+          <span>Aprovados</span>
+          <strong style="color: var(--ok);">0</strong>
+          <small>Atenderam todos os requisitos do desafio</small>
+        </article>
+        <article class="summary-card">
+          <span>Reprovados</span>
+          <strong style="color: var(--bad);">3</strong>
+          <small>Falharam em throughput, p90 ou erro</small>
+        </article>
+        <article class="summary-card">
+          <span>Melhor throughput medido</span>
+          <strong>119,85 req/s</strong>
+          <small>Maior valor entre os cenarios consolidados</small>
+        </article>
+      </div>
     </section>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Sistema operacional</th>
-          <th>Teste</th>
-          <th>Alvo do cenario</th>
-          <th>Inicio</th>
-          <th>Fim</th>
-          <th>Duracao</th>
-          <th>Throughput HTTP</th>
-          <th>P90 da transacao</th>
-          <th>Erros</th>
-          <th>Atendimento aos requisitos</th>
-          <th>Falhas encontradas</th>
-          <th>Relatorio individual</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Sistema operacional</th>
+            <th>Teste</th>
+            <th>Resultado</th>
+            <th>Alvo do cenario</th>
+            <th>Throughput medido</th>
+            <th>P90</th>
+            <th>Erros</th>
+            <th>Tempo esperado para 250 req</th>
+            <th>Tempo real para 250 req</th>
+            <th>Falhas encontradas</th>
+          </tr>
+        </thead>
+        <tbody>
       <tr>
         <td>linux</td>
         <td>BlazeDemo - Load</td>
+        <td><span class="status-pill status-fail">Reprovado no desafio</span></td>
         <td>280 req/s</td>
-        <td>23/03/2026, 01:10:07</td>
-        <td>23/03/2026, 01:15:07</td>
-        <td>5min 0s</td>
-        <td>69.94</td>
+        <td>69.94 req/s</td>
         <td>1354 ms</td>
         <td>0.00%</td>
-        <td>Reprovado no desafio</td>
-        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span></td>
-        <td><a href="../linux/index.html">Abrir relatorio individual</a></td>
+        <td>1 s</td>
+        <td>3,57 s</td>
+        <td><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 69,94 req/s medidos</span></td>
       </tr>
       <tr>
         <td>macos</td>
         <td>BlazeDemo - Smoke</td>
+        <td><span class="status-pill status-fail">Reprovado no desafio</span></td>
         <td>8 req/s</td>
-        <td>23/03/2026, 01:09:16</td>
-        <td>23/03/2026, 01:09:46</td>
-        <td>30s</td>
-        <td>2.02</td>
+        <td>2.02 req/s</td>
         <td>2059 ms</td>
         <td>0.00%</td>
-        <td>Reprovado no desafio</td>
-        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span> <span class="fail-chip">P90 acima de 2000 ms</span></td>
-        <td><a href="../macos/index.html">Abrir relatorio individual</a></td>
+        <td>1 s</td>
+        <td>123,8 s</td>
+        <td><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 2,02 req/s medidos</span> <span class="fail-chip">Latencia acima do limite: maximo de 2000 ms e 2059 ms medidos</span></td>
       </tr>
       <tr>
         <td>windows</td>
         <td>BlazeDemo - Spike</td>
+        <td><span class="status-pill status-fail">Reprovado no desafio</span></td>
         <td>480 req/s</td>
-        <td>23/03/2026, 01:31:47</td>
-        <td>23/03/2026, 01:34:48</td>
-        <td>3min 0s</td>
-        <td>119.85</td>
+        <td>119.85 req/s</td>
         <td>1404 ms</td>
         <td>0.00%</td>
-        <td>Reprovado no desafio</td>
-        <td><span class="fail-chip">Throughput abaixo de 250 req/s</span></td>
-        <td><a href="../windows/index.html">Abrir relatorio individual</a></td>
+        <td>1 s</td>
+        <td>2,09 s</td>
+        <td><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 119,85 req/s medidos</span></td>
       </tr></tbody>
-    </table>
+      </table>
+    </div>
 
     <div class="grid">
     <section class="card">
-      <h2>linux</h2>
-      <p><strong>Cenario:</strong> load</p>
-      <p><strong>Alvo do cenario:</strong> 280 req/s</p>
-      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
-      <p><strong>Inicio:</strong> 23/03/2026, 01:10:07</p>
-      <p><strong>Fim:</strong> 23/03/2026, 01:15:07</p>
-      <p><strong>Duracao:</strong> 5min 0s</p>
-      <p><strong>Throughput HTTP:</strong> 69.94 req/s</p>
-      <p><strong>P90 da transacao:</strong> 1354 ms</p>
-      <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Reprovado no desafio</p>
-      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span></p>
+      <div class="card-header">
+        <div>
+          <span class="card-kicker">linux</span>
+          <h2>BlazeDemo - Load</h2>
+        </div>
+        <span class="status-pill status-fail">Reprovado no desafio</span>
+      </div>
+      <div class="metrics-strip">
+        <div class="metric-box">
+          <span>Throughput medido</span>
+          <strong>69.94 req/s</strong>
+        </div>
+        <div class="metric-box">
+          <span>P90 da transacao</span>
+          <strong>1354 ms</strong>
+        </div>
+        <div class="metric-box">
+          <span>Taxa de erro</span>
+          <strong>0.00%</strong>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-item"><span>Cenario</span>load</div>
+        <div class="meta-item"><span>Meta minima do desafio</span>250 req/s</div>
+        <div class="meta-item"><span>Alvo configurado do cenario</span>280 req/s</div>
+        <div class="meta-item"><span>Duracao total</span>5min 0s</div>
+        <div class="meta-item"><span>Inicio</span>23/03/2026, 01:10:07</div>
+        <div class="meta-item"><span>Fim</span>23/03/2026, 01:15:07</div>
+      </div>
+      <div class="analysis-grid">
+        <section class="panel">
+          <h3>Falhas encontradas</h3>
+          <div><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 69,94 req/s medidos</span></div>
+        </section>
+        <section class="panel">
+          <h3>Tempo para completar 250 requisicoes</h3>
+          <p class="panel-note">Esperado: 1 s. Real medido: 3,57 s.</p>
+          <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo esperado para 250 requisicoes</span>
+        <strong>1 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 27.976%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo real para 250 requisicoes</span>
+        <strong>3,57 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 100%;"></div></div>
+    </div></div>
+        </section>
+      </div>
+      <section class="panel chart-panel">
+        <h3>Grafico comparativo de throughput</h3>
+        <p class="panel-note">Comparacao entre a meta minima do desafio, o alvo configurado no cenario e o throughput realmente entregue.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Meta minima do desafio</span>
+        <strong>250 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 89.28571428571429%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Alvo configurado do cenario</span>
+        <strong>280 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 100%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Throughput medido</span>
+        <strong>69,94 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 24.978571428571428%;"></div></div>
+    </div></div>
+      </section>
     </section>
     <section class="card">
-      <h2>macos</h2>
-      <p><strong>Cenario:</strong> smoke</p>
-      <p><strong>Alvo do cenario:</strong> 8 req/s</p>
-      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
-      <p><strong>Inicio:</strong> 23/03/2026, 01:09:16</p>
-      <p><strong>Fim:</strong> 23/03/2026, 01:09:46</p>
-      <p><strong>Duracao:</strong> 30s</p>
-      <p><strong>Throughput HTTP:</strong> 2.02 req/s</p>
-      <p><strong>P90 da transacao:</strong> 2059 ms</p>
-      <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Reprovado no desafio</p>
-      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span> <span class="fail-chip">P90 acima de 2000 ms</span></p>
+      <div class="card-header">
+        <div>
+          <span class="card-kicker">macos</span>
+          <h2>BlazeDemo - Smoke</h2>
+        </div>
+        <span class="status-pill status-fail">Reprovado no desafio</span>
+      </div>
+      <div class="metrics-strip">
+        <div class="metric-box">
+          <span>Throughput medido</span>
+          <strong>2.02 req/s</strong>
+        </div>
+        <div class="metric-box">
+          <span>P90 da transacao</span>
+          <strong>2059 ms</strong>
+        </div>
+        <div class="metric-box">
+          <span>Taxa de erro</span>
+          <strong>0.00%</strong>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-item"><span>Cenario</span>smoke</div>
+        <div class="meta-item"><span>Meta minima do desafio</span>250 req/s</div>
+        <div class="meta-item"><span>Alvo configurado do cenario</span>8 req/s</div>
+        <div class="meta-item"><span>Duracao total</span>30s</div>
+        <div class="meta-item"><span>Inicio</span>23/03/2026, 01:09:16</div>
+        <div class="meta-item"><span>Fim</span>23/03/2026, 01:09:46</div>
+      </div>
+      <div class="analysis-grid">
+        <section class="panel">
+          <h3>Falhas encontradas</h3>
+          <div><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 2,02 req/s medidos</span> <span class="fail-chip">Latencia acima do limite: maximo de 2000 ms e 2059 ms medidos</span></div>
+        </section>
+        <section class="panel">
+          <h3>Tempo para completar 250 requisicoes</h3>
+          <p class="panel-note">Esperado: 1 s. Real medido: 123,8 s.</p>
+          <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo esperado para 250 requisicoes</span>
+        <strong>1 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 2%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo real para 250 requisicoes</span>
+        <strong>123,8 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 100%;"></div></div>
+    </div></div>
+        </section>
+      </div>
+      <section class="panel chart-panel">
+        <h3>Grafico comparativo de throughput</h3>
+        <p class="panel-note">Comparacao entre a meta minima do desafio, o alvo configurado no cenario e o throughput realmente entregue.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Meta minima do desafio</span>
+        <strong>250 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 100%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Alvo configurado do cenario</span>
+        <strong>8 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 3.2%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Throughput medido</span>
+        <strong>2,02 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 2%;"></div></div>
+    </div></div>
+      </section>
     </section>
     <section class="card">
-      <h2>windows</h2>
-      <p><strong>Cenario:</strong> spike</p>
-      <p><strong>Alvo do cenario:</strong> 480 req/s</p>
-      <p><strong>Meta minima do desafio:</strong> 250 req/s</p>
-      <p><strong>Inicio:</strong> 23/03/2026, 01:31:47</p>
-      <p><strong>Fim:</strong> 23/03/2026, 01:34:48</p>
-      <p><strong>Duracao:</strong> 3min 0s</p>
-      <p><strong>Throughput HTTP:</strong> 119.85 req/s</p>
-      <p><strong>P90 da transacao:</strong> 1404 ms</p>
-      <p><strong>Taxa de erro:</strong> 0.00%</p>
-      <p><strong>Status:</strong> Reprovado no desafio</p>
-      <p><strong>Falhas encontradas:</strong> <span class="fail-chip">Throughput abaixo de 250 req/s</span></p>
+      <div class="card-header">
+        <div>
+          <span class="card-kicker">windows</span>
+          <h2>BlazeDemo - Spike</h2>
+        </div>
+        <span class="status-pill status-fail">Reprovado no desafio</span>
+      </div>
+      <div class="metrics-strip">
+        <div class="metric-box">
+          <span>Throughput medido</span>
+          <strong>119.85 req/s</strong>
+        </div>
+        <div class="metric-box">
+          <span>P90 da transacao</span>
+          <strong>1404 ms</strong>
+        </div>
+        <div class="metric-box">
+          <span>Taxa de erro</span>
+          <strong>0.00%</strong>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-item"><span>Cenario</span>spike</div>
+        <div class="meta-item"><span>Meta minima do desafio</span>250 req/s</div>
+        <div class="meta-item"><span>Alvo configurado do cenario</span>480 req/s</div>
+        <div class="meta-item"><span>Duracao total</span>3min 0s</div>
+        <div class="meta-item"><span>Inicio</span>23/03/2026, 01:31:47</div>
+        <div class="meta-item"><span>Fim</span>23/03/2026, 01:34:48</div>
+      </div>
+      <div class="analysis-grid">
+        <section class="panel">
+          <h3>Falhas encontradas</h3>
+          <div><span class="fail-chip">Nao atingiu o throughput minimo: 250 req/s exigidos e 119,85 req/s medidos</span></div>
+        </section>
+        <section class="panel">
+          <h3>Tempo para completar 250 requisicoes</h3>
+          <p class="panel-note">Esperado: 1 s. Real medido: 2,09 s.</p>
+          <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo esperado para 250 requisicoes</span>
+        <strong>1 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 47.94%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Tempo real para 250 requisicoes</span>
+        <strong>2,09 s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 100%;"></div></div>
+    </div></div>
+        </section>
+      </div>
+      <section class="panel chart-panel">
+        <h3>Grafico comparativo de throughput</h3>
+        <p class="panel-note">Comparacao entre a meta minima do desafio, o alvo configurado no cenario e o throughput realmente entregue.</p>
+        <div class="bars"><div class="bar-row">
+      <div class="bar-label">
+        <span>Meta minima do desafio</span>
+        <strong>250 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-target" style="width: 52.083333333333336%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Alvo configurado do cenario</span>
+        <strong>480 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-scenario" style="width: 100%;"></div></div>
+    </div><div class="bar-row">
+      <div class="bar-label">
+        <span>Throughput medido</span>
+        <strong>119,85 req/s</strong>
+      </div>
+      <div class="bar-track"><div class="bar-fill bar-fail" style="width: 24.968749999999996%;"></div></div>
+    </div></div>
+      </section>
     </section></div>
   </main>
 </body>
