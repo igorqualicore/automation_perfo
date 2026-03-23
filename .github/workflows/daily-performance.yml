@@ -16,7 +16,7 @@ on:
           - load
           - spike
   schedule:
-    - cron: '0 11 * * *'
+    - cron: '30 13 * * *'
 
 permissions:
   contents: read

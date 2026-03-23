@@ -120,8 +120,8 @@ O repositório agora possui uma workflow GitHub Actions em [.github/workflows/da
 Comportamento da pipeline:
 
 - executa automaticamente a cada push na branch main
-- executa diariamente às 08:00 no horário de Brasília
-- usa o cron 11:00 UTC no GitHub Actions
+- executa diariamente às 10:30 no horário de Brasília
+- usa o cron 13:30 UTC no GitHub Actions
 - roda em Windows, macOS e Linux
 - executa load test por padrão no push e no agendamento, com alvo configurado de 250 req/s
 - permite execução manual via workflow_dispatch com seleção de cenário smoke, load ou spike
@@ -142,7 +142,7 @@ Como abrir corretamente o relatório consolidado:
 
 Observação:
 
-- o GitHub Actions usa UTC em cron; 08:00 de Brasília foi configurado como 11:00 UTC
+- o GitHub Actions usa UTC em cron; 10:30 de Brasília foi configurado como 13:30 UTC
 
 ## Cenários cobertos
 
