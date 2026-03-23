@@ -1,0 +1,16 @@
+{
+  "name": "automation_perfo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Teste de performance com JMeter para o fluxo de compra de passagem no BlazeDemo.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "test:smoke": "node ./scripts/run-jmeter.mjs smoke ./config/smoke.properties",
+    "test:load": "node ./scripts/run-jmeter.mjs load ./config/load.properties",
+    "test:spike": "node ./scripts/run-jmeter.mjs spike ./config/spike.properties",
+    "test:all": "npm run test:smoke && npm run test:load && npm run test:spike"
+  }
+}

@@ -1,0 +1,11 @@
+fromPort,toPort,inputName,address,city,state,zipCode,cardType,creditCardNumber,creditCardMonth,creditCardYear,nameOnCard,rememberMe
+Boston,London,Igor QA,Rua Augusta 100,Sao Paulo,SP,01305000,visa,4111111111111111,11,2030,Igor QA,on
+Boston,Berlin,Maria Tester,Av Paulista 2000,Sao Paulo,SP,01311000,amex,378282246310005,12,2031,Maria Tester,on
+Portland,New York,Carlos Silva,Rua das Flores 10,Curitiba,PR,80010000,visa,4111111111111111,10,2032,Carlos Silva,on
+San Diego,Rome,Ana Souza,Av Atlantica 500,Rio de Janeiro,RJ,22021001,dinersclub,30569309025904,9,2030,Ana Souza,on
+Mexico City,Cairo,Joao Rocha,Rua XV 99,Belo Horizonte,MG,30130010,visa,4111111111111111,8,2031,Joao Rocha,on
+Philadelphia,Dublin,Patricia Lima,Rua das Palmeiras 45,Recife,PE,50030000,amex,378282246310005,7,2033,Patricia Lima,on
+Sao Paolo,London,Renata Costa,Av Boa Viagem 300,Recife,PE,51011140,visa,4111111111111111,6,2030,Renata Costa,on
+Boston,Paris,Bruno Melo,Rua Haddock Lobo 70,Sao Paulo,SP,01414001,visa,4111111111111111,5,2032,Bruno Melo,on
+Portland,Berlin,Clara Nunes,Av Afonso Pena 800,Belo Horizonte,MG,30130003,amex,378282246310005,4,2031,Clara Nunes,on
+San Diego,Cairo,Diego Martins,Rua Chile 123,Salvador,BA,40020000,visa,4111111111111111,3,2034,Diego Martins,on
