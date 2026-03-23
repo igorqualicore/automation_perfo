@@ -127,6 +127,12 @@ Artefatos gerados pela pipeline:
 	- report/index.html com a visão única dos 3 sistemas
 	- dashboards individuais por sistema operacional
 
+Como abrir corretamente o relatório consolidado:
+
+- faça o download e extraia o artifact consolidated-html-report inteiro
+- abra o arquivo consolidated/report/index.html mantendo as pastas linux, windows e macos no mesmo nível de consolidated/report
+- os links Abrir dashboard do HTML consolidado dependem dessa estrutura relativa para funcionar
+
 Observação:
 
 - o GitHub Actions usa UTC em cron; 08:00 de Brasília foi configurado como 11:00 UTC

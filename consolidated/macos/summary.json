@@ -1,0 +1,94 @@
+{
+  "scenario": "smoke",
+  "testName": "BlazeDemo - Smoke",
+  "targetHttpRps": 8,
+  "measuredHttpRps": 2.02,
+  "acceptanceCriteria": {
+    "minimumHttpRps": 250,
+    "p90UnderMs": 2000,
+    "zeroErrors": true
+  },
+  "acceptanceSatisfied": false,
+  "transactionLabel": "Compra de passagem - sucesso",
+  "warmupExcludedSeconds": 10,
+  "testWindowSeconds": 19.84,
+  "execution": {
+    "startTimestamp": 1774238956003,
+    "endTimestamp": 1774238986325,
+    "startAt": "23/03/2026, 01:09:16",
+    "endAt": "23/03/2026, 01:09:46",
+    "totalDurationHuman": "30s"
+  },
+  "requestMetrics": {
+    "count": 40,
+    "errors": 0,
+    "errorRate": 0,
+    "throughput": 2.02,
+    "avg": 398.65,
+    "p90": 502,
+    "min": 264,
+    "max": 836
+  },
+  "businessMetrics": {
+    "count": 9,
+    "errors": 0,
+    "errorRate": 0,
+    "throughput": 0.45,
+    "avg": 1732.11,
+    "p90": 2059,
+    "min": 1580,
+    "max": 2059
+  },
+  "samplesByLabel": {
+    "POST Confirmation": {
+      "count": 9,
+      "errors": 0,
+      "errorRate": 0,
+      "throughput": 0.45,
+      "avg": 443,
+      "p90": 836,
+      "min": 318,
+      "max": 836
+    },
+    "POST Purchase": {
+      "count": 16,
+      "errors": 0,
+      "errorRate": 0,
+      "throughput": 0.81,
+      "avg": 369.94,
+      "p90": 477,
+      "min": 293,
+      "max": 618
+    },
+    "Compra de passagem - sucesso": {
+      "count": 9,
+      "errors": 0,
+      "errorRate": 0,
+      "throughput": 0.45,
+      "avg": 1732.11,
+      "p90": 2059,
+      "min": 1580,
+      "max": 2059
+    },
+    "GET Home": {
+      "count": 4,
+      "errors": 0,
+      "errorRate": 0,
+      "throughput": 0.2,
+      "avg": 416.5,
+      "p90": 751,
+      "min": 264,
+      "max": 751
+    },
+    "POST Reserve": {
+      "count": 11,
+      "errors": 0,
+      "errorRate": 0,
+      "throughput": 0.55,
+      "avg": 397.64,
+      "p90": 431,
+      "min": 298,
+      "max": 784
+    }
+  }
+}

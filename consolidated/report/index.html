@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatorio Consolidado Cross-Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f1e8;
+      --card: #fffaf2;
+      --text: #1f2a37;
+      --muted: #5b6470;
+      --border: #dbcdb8;
+      --accent: #9c4f2f;
+      --accent-soft: #f1d8c8;
+      --ok: #2f7d4f;
+      --bad: #a63d40;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background: linear-gradient(180deg, #f3ede2 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    h1, h2 {
+      margin: 0 0 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      margin: 6px 0;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--accent-soft);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(50, 35, 20, 0.08);
+    }
+
+    .card p {
+      margin: 8px 0;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .legend {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="legend">GitHub Actions</span>
+      <h1>Relatorio consolidado de performance cross-platform</h1>
+      <p>Execucao agendada diariamente as 08:00 no horario de Brasilia, equivalente a 11:00 UTC.</p>
+      <p>Gerado em: 23/03/2026, 01:48:22</p>
+      <p>Este relatorio consolida os resultados de Windows, macOS e Linux em um unico HTML.</p>
+      <p>Os links de dashboard funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sistema operacional</th>
+          <th>Teste</th>
+          <th>Inicio</th>
+          <th>Fim</th>
+          <th>Duracao</th>
+          <th>Throughput HTTP</th>
+          <th>P90 da transacao</th>
+          <th>Erros</th>
+          <th>Atendimento aos requisitos</th>
+          <th>Dashboard</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>linux</td>
+        <td>BlazeDemo - Load</td>
+        <td>23/03/2026, 01:10:07</td>
+        <td>23/03/2026, 01:15:07</td>
+        <td>5min 0s</td>
+        <td>69.94</td>
+        <td>1354 ms</td>
+        <td>0.00%</td>
+        <td>Nao atende aos requisitos</td>
+        <td><a href="../linux/dashboard/index.html">Abrir dashboard</a></td>
+      </tr>
+      <tr>
+        <td>macos</td>
+        <td>BlazeDemo - Smoke</td>
+        <td>23/03/2026, 01:09:16</td>
+        <td>23/03/2026, 01:09:46</td>
+        <td>30s</td>
+        <td>2.02</td>
+        <td>2059 ms</td>
+        <td>0.00%</td>
+        <td>Nao atende aos requisitos</td>
+        <td><a href="../macos/dashboard/index.html">Abrir dashboard</a></td>
+      </tr>
+      <tr>
+        <td>windows</td>
+        <td>BlazeDemo - Spike</td>
+        <td>23/03/2026, 01:31:47</td>
+        <td>23/03/2026, 01:34:48</td>
+        <td>3min 0s</td>
+        <td>119.85</td>
+        <td>1404 ms</td>
+        <td>0.00%</td>
+        <td>Nao atende aos requisitos</td>
+        <td><a href="../windows/dashboard/index.html">Abrir dashboard</a></td>
+      </tr></tbody>
+    </table>
+
+    <div class="grid">
+    <section class="card">
+      <h2>linux</h2>
+      <p><strong>Cenario:</strong> load</p>
+      <p><strong>Inicio:</strong> 23/03/2026, 01:10:07</p>
+      <p><strong>Fim:</strong> 23/03/2026, 01:15:07</p>
+      <p><strong>Duracao:</strong> 5min 0s</p>
+      <p><strong>Throughput HTTP:</strong> 69.94 req/s</p>
+      <p><strong>P90 da transacao:</strong> 1354 ms</p>
+      <p><strong>Taxa de erro:</strong> 0.00%</p>
+      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+    </section>
+    <section class="card">
+      <h2>macos</h2>
+      <p><strong>Cenario:</strong> smoke</p>
+      <p><strong>Inicio:</strong> 23/03/2026, 01:09:16</p>
+      <p><strong>Fim:</strong> 23/03/2026, 01:09:46</p>
+      <p><strong>Duracao:</strong> 30s</p>
+      <p><strong>Throughput HTTP:</strong> 2.02 req/s</p>
+      <p><strong>P90 da transacao:</strong> 2059 ms</p>
+      <p><strong>Taxa de erro:</strong> 0.00%</p>
+      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+    </section>
+    <section class="card">
+      <h2>windows</h2>
+      <p><strong>Cenario:</strong> spike</p>
+      <p><strong>Inicio:</strong> 23/03/2026, 01:31:47</p>
+      <p><strong>Fim:</strong> 23/03/2026, 01:34:48</p>
+      <p><strong>Duracao:</strong> 3min 0s</p>
+      <p><strong>Throughput HTTP:</strong> 119.85 req/s</p>
+      <p><strong>P90 da transacao:</strong> 1404 ms</p>
+      <p><strong>Taxa de erro:</strong> 0.00%</p>
+      <p><strong>Status:</strong> Nao atende aos requisitos</p>
+    </section></div>
+  </main>
+</body>
+</html>

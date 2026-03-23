@@ -37,7 +37,7 @@ function buildHtml(summaries) {
   }).format(new Date());
 
   const rows = summaries.map(({ os, summary, dashboardRelativePath }) => {
-    const acceptance = summary.acceptanceSatisfied ? 'Atendido' : 'Nao atendido';
+    const acceptance = summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Nao atende aos requisitos';
     return `
       <tr>
         <td>${escapeHtml(os)}</td>
@@ -63,7 +63,7 @@ function buildHtml(summaries) {
       <p><strong>Throughput HTTP:</strong> ${summary.measuredHttpRps} req/s</p>
       <p><strong>P90 da transacao:</strong> ${summary.businessMetrics.p90} ms</p>
       <p><strong>Taxa de erro:</strong> ${(summary.businessMetrics.errorRate * 100).toFixed(2)}%</p>
-      <p><strong>Status:</strong> ${summary.acceptanceSatisfied ? 'Atendido' : 'Nao atendido'}</p>
+      <p><strong>Status:</strong> ${summary.acceptanceSatisfied ? 'Atende aos requisitos' : 'Nao atende aos requisitos'}</p>
     </section>`).join('');
 
   return `<!DOCTYPE html>
@@ -183,6 +183,7 @@ function buildHtml(summaries) {
       <p>Execucao agendada diariamente as 08:00 no horario de Brasilia, equivalente a 11:00 UTC.</p>
       <p>Gerado em: ${escapeHtml(generatedAt)}</p>
       <p>Este relatorio consolida os resultados de Windows, macOS e Linux em um unico HTML.</p>
+      <p>Os links de dashboard funcionam quando este arquivo e as pastas linux, windows e macos sao abertas juntos, mantendo a estrutura completa do artifact extraido.</p>
     </section>
 
     <table>
@@ -196,7 +197,7 @@ function buildHtml(summaries) {
           <th>Throughput HTTP</th>
           <th>P90 da transacao</th>
           <th>Erros</th>
-          <th>Status</th>
+          <th>Atendimento aos requisitos</th>
           <th>Dashboard</th>
         </tr>
       </thead>
