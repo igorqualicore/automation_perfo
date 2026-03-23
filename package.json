@@ -11,6 +11,7 @@
     "test:smoke": "node ./scripts/run-jmeter.mjs smoke ./config/smoke.properties",
     "test:load": "node ./scripts/run-jmeter.mjs load ./config/load.properties",
     "test:spike": "node ./scripts/run-jmeter.mjs spike ./config/spike.properties",
-    "test:all": "npm run test:smoke && npm run test:load && npm run test:spike"
+    "test:all": "npm run test:smoke && npm run test:load && npm run test:spike",
+    "report:matrix": "node ./scripts/generate-matrix-report.mjs ./consolidated ./consolidated/report/index.html"
   }
 }

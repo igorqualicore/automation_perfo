@@ -1,0 +1,151 @@
+name: Daily Performance Baseline
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: Cenario a executar
+        required: true
+        default: smoke
+        type: choice
+        options:
+          - smoke
+          - load
+          - spike
+  schedule:
+    - cron: '0 11 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  cross-platform-run:
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: Linux
+            artifact_name: linux
+          - os: windows-latest
+            label: Windows
+            artifact_name: windows
+          - os: macos-latest
+            label: macOS
+            artifact_name: macos
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install JMeter
+        shell: bash
+        run: |
+          set -euo pipefail
+          JMETER_VERSION=5.6.3
+          INSTALL_DIR="$RUNNER_TEMP/apache-jmeter-$JMETER_VERSION"
+
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            ARCHIVE="$RUNNER_TEMP/apache-jmeter-$JMETER_VERSION.zip"
+            curl -fsSL "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip" -o "$ARCHIVE"
+            unzip -q "$ARCHIVE" -d "$RUNNER_TEMP"
+          else
+            ARCHIVE="$RUNNER_TEMP/apache-jmeter-$JMETER_VERSION.tgz"
+            curl -fsSL "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.tgz" -o "$ARCHIVE"
+            tar -xzf "$ARCHIVE" -C "$RUNNER_TEMP"
+          fi
+
+          echo "JMETER_HOME=$INSTALL_DIR" >> "$GITHUB_ENV"
+          echo "$INSTALL_DIR/bin" >> "$GITHUB_PATH"
+
+      - name: Select scenario
+        id: scenario
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.scenario }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=smoke" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run performance scenario
+        shell: bash
+        run: npm run test:${{ steps.scenario.outputs.name }}
+
+      - name: Prepare artifact bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "artifacts/${{ matrix.artifact_name }}"
+          cp "reports/${{ steps.scenario.outputs.name }}/summary.json" "artifacts/${{ matrix.artifact_name }}/summary.json"
+          cp "reports/${{ steps.scenario.outputs.name }}/summary.md" "artifacts/${{ matrix.artifact_name }}/summary.md"
+          cp -R "reports/${{ steps.scenario.outputs.name }}/dashboard" "artifacts/${{ matrix.artifact_name }}/dashboard"
+
+      - name: Upload per-OS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: artifacts/${{ matrix.artifact_name }}
+          retention-days: 15
+
+  consolidated-report:
+    name: Consolidated HTML report
+    runs-on: ubuntu-latest
+    needs: cross-platform-run
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: consolidated/linux
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows
+          path: consolidated/windows
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
+          path: consolidated/macos
+
+      - name: Generate consolidated HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p consolidated/report
+          node ./scripts/generate-matrix-report.mjs ./consolidated ./consolidated/report/index.html
+
+      - name: Upload consolidated HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: consolidated-html-report
+          path: consolidated
+          retention-days: 15

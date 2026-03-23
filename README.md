@@ -73,6 +73,12 @@ npm run test:spike
 npm run test:all
 ```
 
+### Relatório consolidado de matriz
+
+```bash
+npm run report:matrix
+```
+
 Cada execução gera os artefatos abaixo em reports/<cenario>:
 
 - results.jtl: resultados brutos do JMeter
@@ -90,11 +96,39 @@ Carga:
 
 - [reports/load/dashboard/index.html](reports/load/dashboard/index.html)
 
+Pico:
+
+- [reports/spike/dashboard/index.html](reports/spike/dashboard/index.html)
+
 Exemplo para abrir localmente no Windows:
 
 ```powershell
 Start-Process "C:\Users\HP\OneDrive\Desktop\automation_test\automation_perfo\reports\load\dashboard\index.html"
 ```
+
+## Pipeline diária
+
+O repositório agora possui uma workflow GitHub Actions em [.github/workflows/daily-performance.yml](.github/workflows/daily-performance.yml).
+
+Comportamento da pipeline:
+
+- executa diariamente às 08:00 no horário de Brasília
+- usa o cron 11:00 UTC no GitHub Actions
+- roda em Windows, macOS e Linux
+- executa smoke test por padrão no agendamento
+- permite execução manual via workflow_dispatch com seleção de cenário smoke, load ou spike
+- publica um HTML consolidado com os 3 sistemas operacionais
+
+Artefatos gerados pela pipeline:
+
+- um artifact por sistema operacional com summary.json, summary.md e dashboard HTML
+- um artifact consolidado contendo:
+	- report/index.html com a visão única dos 3 sistemas
+	- dashboards individuais por sistema operacional
+
+Observação:
+
+- o GitHub Actions usa UTC em cron; 08:00 de Brasília foi configurado como 11:00 UTC
 
 ## Cenários cobertos
 
@@ -164,22 +198,41 @@ Conclusão do teste de carga:
 
 ### Teste de pico
 
-Status atual:
+Configuração executada:
 
-- cenário configurado no projeto
-- execução final ainda não consolidada neste repositório
+- usuários: 600
+- ramp-up: 20s
+- duração: 180s
+- alvo configurado: 7200 transações por minuto
+- equivalente teórico: 480 req/s considerando 4 requisições HTTP por jornada completa
 
-Comando pronto para execução:
+Resultado medido:
 
-```bash
-npm run test:spike
-```
+- início: 23/03/2026, 01:31:47
+- fim: 23/03/2026, 01:34:48
+- duração total: 3min 0s
+- throughput HTTP medido: 119.85 req/s
+- percentil 90 da transação de negócio: 1404 ms
+- taxa de erro da transação: 0%
+- compras concluídas no período analisado: 4261
 
-Após a execução, os artefatos serão gerados em:
+Leitura do resultado:
+
+- o percentil 90 da transação permaneceu abaixo de 2 segundos
+- a estabilidade funcional foi mantida, sem erros
+- o throughput sustentado cresceu em relação ao teste de carga, mas ainda ficou abaixo das 250 req/s exigidas
+
+Conclusão do teste de pico:
+
+- o critério de aceitação não foi atendido
+- mesmo com maior agressividade de entrada, o sistema manteve boa latência e ausência de erros
+- a principal limitação continuou sendo a vazão sustentada, com aproximadamente 119.85 req/s, inferior ao mínimo de 250 req/s
+
+Artefatos gerados:
 
 - [reports/spike/dashboard/index.html](reports/spike/dashboard/index.html)
-- reports/spike/summary.json
-- reports/spike/summary.md
+- [reports/spike/summary.json](reports/spike/summary.json)
+- [reports/spike/summary.md](reports/spike/summary.md)
 
 ## Parecer final do desafio
 
@@ -187,8 +240,8 @@ Com base na execução real consolidada neste repositório:
 
 - o fluxo de compra foi automatizado com sucesso em JMeter
 - os relatórios em HTML e resumos analíticos foram gerados com localização em PT-BR
-- o critério de latência foi atendido no teste de carga executado
-- o critério de throughput de 250 req/s não foi atendido na execução realizada
+- o critério de latência foi atendido nas execuções de carga e pico realizadas
+- o critério de throughput de 250 req/s não foi atendido nem no teste de carga nem no teste de pico
 
 Portanto, com a evidência atual, o critério de aceitação do desafio foi não satisfatório.
 
@@ -205,4 +258,4 @@ Arquivo:
 - O runner em Node localiza automaticamente JMeter e Java nas instalações padrão do Windows.
 - O dashboard HTML gerado pelo JMeter é localizado automaticamente para PT-BR após cada execução.
 - Os campos de início, fim e duração dos dashboards HTML são pós-processados para exibição em formato brasileiro.
-- O teste de pico ainda precisa ser executado para completar a comparação formal entre carga e pico no mesmo README.
+- O teste de pico mostrou melhora de throughput frente ao teste de carga, mas ainda abaixo da meta contratada pelo desafio.
